@@ -1,0 +1,9 @@
+{
+  "mappings": [
+    "/content/hashicorp-xwalk-poc/:/",
+    "/content/hashicorp-xwalk-poc/metadata:/metadata.json"
+  ],
+  "includes": [
+    "/content/hashicorp-xwalk-poc/"
+  ]
+}
