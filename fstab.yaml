@@ -1,5 +1,5 @@
 mountpoints:
   /:
-    url: "https://author-p131558-e1282741.adobeaemcloud.com/bin/franklin.delivery/Aravindan-l/hashicorp-xwalk-poc/main"
+    url: "https://author-p131558-e1282741.adobeaemcloud.com/bin/franklin.delivery/aravindan-l/hashicorp-xwalk-poc/main"
     type: "markup"
     suffix: ".html"
