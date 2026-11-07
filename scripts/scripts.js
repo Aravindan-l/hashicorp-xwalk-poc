@@ -27,6 +27,7 @@ const AUTHOR_SITE_ROOT = '/content/hashicorp-xwalk-poc';
  * @returns {string} The path to fetch
  */
 export function resolveSitePath(path) {
+  if (path.startsWith('/content/')) return path;
   const { pathname } = window.location;
   if (pathname.startsWith(`${AUTHOR_SITE_ROOT}/`)) return `${AUTHOR_SITE_ROOT}${path}`;
   if (pathname.startsWith('/content/')) return `/content${path}`;

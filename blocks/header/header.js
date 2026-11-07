@@ -15,6 +15,13 @@ import { loadFragment } from '../fragment/fragment.js';
 const isDesktop = window.matchMedia('(min-width: 1120px)');
 const CLOSE_DELAY = 150;
 
+// Pages on these templates also get a section bar below the header (page metadata
+// "subnav" can point any page at a fragment instead).
+const SUBNAV_BY_TEMPLATE = {
+  'blog-article': '/fragments/blog-nav',
+  'blog-listing': '/fragments/blog-nav',
+};
+
 function el(tag, className, ...children) {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -187,6 +194,93 @@ function toggleDrawer(nav, open = !nav.classList.contains('is-open')) {
   document.body.style.overflowY = open && !isDesktop.matches ? 'hidden' : '';
 }
 
+/*
+ * Section bar fragment (e.g. /fragments/blog-nav), default content:
+ * 1 logo image and its link, 2 a list of links, then one section per dropdown
+ * (h2 label, then an h3 + list for each group of links).
+ */
+async function buildSubnav() {
+  const meta = getMetadata('subnav');
+  const fallback = SUBNAV_BY_TEMPLATE[getMetadata('template')];
+  let path = null;
+  if (meta) path = new URL(meta, window.location).pathname;
+  else if (fallback) path = resolveSitePath(fallback);
+  if (!path) return null;
+  const fragment = await loadFragment(path);
+  if (!fragment) return null;
+  decorateIconTokens(fragment);
+  decorateIcons(fragment);
+  const [brandSection, linksSection, ...menuSections] = [...fragment.querySelectorAll(':scope > .section')];
+  if (!brandSection) return null;
+
+  const bar = el('nav', 'subnav');
+  bar.setAttribute('aria-label', brandSection.querySelector('a')?.textContent.trim() || 'Section');
+  const brand = buildBrand(brandSection);
+  brand.className = 'subnav-brand';
+
+  const items = el('div', 'subnav-items');
+  if (linksSection) {
+    const links = el('ul', 'subnav-links', ...[...linksSection.querySelectorAll('li a')].map((a) => {
+      const link = plainLink(a);
+      link.textContent = a.textContent.trim();
+      return el('li', '', link);
+    }));
+    items.append(links);
+  }
+  menuSections.forEach((section, i) => {
+    const content = section.querySelector('.default-content-wrapper') || section;
+    const label = content.querySelector('h2')?.textContent.trim();
+    if (!label) return;
+    const trigger = el('button', 'subnav-trigger', label);
+    trigger.type = 'button';
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('aria-controls', `subnav-panel-${i + 1}`);
+    const groups = [...content.querySelectorAll(':scope > h3')].map((h3) => {
+      const list = h3.nextElementSibling?.tagName === 'UL' ? h3.nextElementSibling : null;
+      const ul = el('ul', 'subnav-group-list', ...(list ? [...list.children].map((li) => {
+        const a = li.querySelector('a');
+        if (!a) return null;
+        const link = plainLink(a);
+        link.append(...li.querySelectorAll('.icon'), a.textContent.trim());
+        return el('li', '', link);
+      }) : []));
+      return el('div', 'subnav-group', el('p', 'subnav-group-title', h3.textContent.trim()), ul);
+    });
+    const panel = el('div', 'subnav-panel', ...groups);
+    panel.id = `subnav-panel-${i + 1}`;
+    const menu = el('div', 'subnav-menu', trigger, panel);
+    trigger.addEventListener('click', () => {
+      const open = !menu.classList.contains('is-open');
+      bar.querySelectorAll('.subnav-menu.is-open').forEach((m) => {
+        m.classList.remove('is-open');
+        m.querySelector('.subnav-trigger').setAttribute('aria-expanded', 'false');
+      });
+      menu.classList.toggle('is-open', open);
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    items.append(menu);
+  });
+
+  const toggle = el('button', 'subnav-toggle', 'Menu');
+  toggle.type = 'button';
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.addEventListener('click', () => {
+    const open = !bar.classList.contains('is-open');
+    bar.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  bar.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    bar.classList.remove('is-open');
+    bar.querySelectorAll('.subnav-menu.is-open').forEach((m) => m.classList.remove('is-open'));
+  });
+  document.addEventListener('click', (e) => {
+    if (!bar.contains(e.target)) bar.querySelectorAll('.subnav-menu.is-open').forEach((m) => m.classList.remove('is-open'));
+  });
+  bar.append(brand, toggle, items);
+  return bar;
+}
+
 /**
  * Loads the header fragment and builds the navigation.
  * @param {Element} block The header block element
@@ -245,4 +339,8 @@ export default async function decorate(block) {
   isDesktop.addEventListener('change', () => toggleDrawer(nav, false));
 
   block.append(el('div', 'nav-wrapper', nav));
+
+  // The section bar sits after the header element so it can stick to the top on scroll.
+  const subnav = await buildSubnav();
+  if (subnav) block.closest('header')?.after(el('div', 'subnav-wrapper', subnav));
 }

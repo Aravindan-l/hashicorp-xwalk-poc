@@ -57,7 +57,8 @@ function parseDate(text) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function buildDate(text) {
+/** A <time> element showing the date as "Jan 1, 2013"; shared with the blog-list block. */
+export function buildDate(text) {
   if (!text) return null;
   const date = parseDate(text);
   const time = el('time', '', date

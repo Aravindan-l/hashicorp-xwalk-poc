@@ -10,6 +10,7 @@
     "components": [
       "accordion",
       "article-header",
+      "blog-list",
       "button",
       "cards",
       "carousel",
@@ -39,6 +40,12 @@
     "id": "article-header",
     "components": [
       "article-author"
+    ]
+  },
+  {
+    "id": "blog-list",
+    "components": [
+      "blog-list-item"
     ]
   },
   {

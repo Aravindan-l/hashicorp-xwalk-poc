@@ -272,6 +272,37 @@
           ]
         }
       ]
+    },
+    {
+      "name": "blog-listing",
+      "urls": [
+        "https://www.hashicorp.com/en/blog"
+      ],
+      "description": "HashiCorp blog home: a \"Latest posts\" heading and a hand-picked Blog List of the migrated articles",
+      "blocks": [
+        {
+          "name": "blog-list",
+          "instances": [
+            "main"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-1",
+          "name": "Latest posts",
+          "selector": [
+            "main"
+          ],
+          "style": null,
+          "blocks": [
+            "blog-list"
+          ],
+          "defaultContent": [
+            "h2"
+          ]
+        }
+      ]
     }
   ]
 }

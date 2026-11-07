@@ -34,6 +34,10 @@
           {
             "name": "Blog Article",
             "value": "blog-article"
+          },
+          {
+            "name": "Blog Listing",
+            "value": "blog-listing"
           }
         ]
       },
@@ -299,6 +303,18 @@
         "valueType": "string",
         "name": "link",
         "label": "Author Page"
+      }
+    ]
+  },
+  {
+    "id": "blog-list-item",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Blog Article",
+        "description": "An article page built on the Blog Article template; its card is filled from the article itself"
       }
     ]
   },

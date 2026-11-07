@@ -7,7 +7,7 @@
  * exactly (md2jcr matches them case-sensitively): template, image.
  */
 // Import template -> value of the page's "template" property (pages without one use the default).
-const PAGE_TEMPLATES = { 'blog-article': 'blog-article' };
+const PAGE_TEMPLATES = { 'blog-article': 'blog-article', 'blog-listing': 'blog-listing' };
 
 export default function transform(hookName, element, payload) {
   if (hookName !== 'afterTransform') return;

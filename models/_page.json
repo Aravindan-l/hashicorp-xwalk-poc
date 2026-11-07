@@ -35,6 +35,10 @@
             {
               "name": "Blog Article",
               "value": "blog-article"
+            },
+            {
+              "name": "Blog Listing",
+              "value": "blog-listing"
             }
           ]
         },
