@@ -1,0 +1,18 @@
+{
+  "status": "success",
+  "url": "https://www.hashicorp.com/en/blog/migrate-sentinel-and-opa-policies-to-terraform-policy-faster",
+  "path": "blog/migrate-sentinel-and-opa-policies-to-terraform-policy-faster",
+  "timestamp": "2026-11-07T08:53:10.852Z",
+  "title": "Migrate Sentinel and OPA policies to Terraform policy faster with the Terraform policy agent",
+  "template": "blog-article",
+  "blocks": [
+    "article-header"
+  ],
+  "assets": {
+    "/content/dam/hashicorp-xwalk-poc/blog/migrate-sentinel-and-opa-policies-to-terraform-policy-faster/1758662117-blog-product-terraform-edited.webp": "https://www.datocms-assets.com/2885/1792519271-1758662117-blog_product_terraform-edited.webp",
+    "/content/dam/hashicorp-xwalk-poc/blog/migrate-sentinel-and-opa-policies-to-terraform-policy-faster/amitha-id.jpg": "https://www.datocms-assets.com/2885/1789577593-amitha-id.jpeg",
+    "/content/dam/hashicorp-xwalk-poc/blog/migrate-sentinel-and-opa-policies-to-terraform-policy-faster/image-11-5-26-at-8-18-am.png": "https://www.datocms-assets.com/2885/1793884723-image-11-5-26-at-8-18-am.png",
+    "/content/dam/hashicorp-xwalk-poc/blog/migrate-sentinel-and-opa-policies-to-terraform-policy-faster/tfp.png": "https://www.datocms-assets.com/2885/1793885021-tfp.png",
+    "/content/dam/hashicorp-xwalk-poc/blog/migrate-sentinel-and-opa-policies-to-terraform-policy-faster/1758662117-blog-product-terraform-edited.png": "https://www.datocms-assets.com/2885/1792519271-1758662117-blog_product_terraform-edited.webp?w=1200&h=630&fit=crop&fm=png"
+  }
+}
