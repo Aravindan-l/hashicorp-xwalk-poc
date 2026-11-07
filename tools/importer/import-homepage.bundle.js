@@ -655,7 +655,7 @@ var CustomImportScript = (() => {
   }
 
   // tools/importer/transformers/hashicorp-metadata.js
-  var PAGE_TEMPLATES = { "blog-article": "blog-article" };
+  var PAGE_TEMPLATES = { "blog-article": "blog-article", "blog-listing": "blog-listing" };
   function transform2(hookName, element, payload) {
     var _a;
     if (hookName !== "afterTransform") return;
