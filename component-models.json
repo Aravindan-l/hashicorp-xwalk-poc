@@ -20,6 +20,29 @@
         "name": "keywords",
         "multi": true,
         "label": "Keywords"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "template",
+        "label": "Template",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Blog Article",
+            "value": "blog-article"
+          }
+        ]
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Social Sharing Image",
+        "multi": false
       }
     ]
   },
@@ -157,6 +180,93 @@
         "value": "",
         "label": "Text",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "article-header",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "breadcrumbs",
+        "value": "",
+        "label": "Breadcrumbs",
+        "description": "Links shown above the title, for example Blog / Category"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Article Title",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "intro",
+        "value": "",
+        "label": "Introduction"
+      },
+      {
+        "component": "date-time",
+        "valueType": "date-time",
+        "name": "publishDate",
+        "label": "Publication Date"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "tags",
+        "value": "",
+        "label": "Tags",
+        "description": "A list of tag links, for example product or topic pages"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Hero Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Hero Image Alt Text"
+      }
+    ]
+  },
+  {
+    "id": "article-author",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Author Photo",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Author Photo Alt Text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "name",
+        "value": "",
+        "label": "Author Name",
+        "required": true
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Author Page"
       }
     ]
   },

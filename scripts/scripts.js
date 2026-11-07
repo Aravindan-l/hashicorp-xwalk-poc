@@ -10,7 +10,11 @@ import {
   loadSection,
   loadSections,
   loadCSS,
+  toClassName,
 } from './aem.js';
+
+// Page templates with their own stylesheet in /templates/<name>/<name>.css
+const TEMPLATES = ['blog-article'];
 
 /**
  * Moves all the attributes from a given elmenet to another given element.
@@ -149,12 +153,45 @@ export function decorateMain(main) {
 }
 
 /**
+ * Edge Delivery turns a page's Metadata block into <meta> tags, so it never reaches main.
+ * Local previews of imported .plain.html keep it in main: apply it the same way so
+ * templates and metadata behave as they will once published. No-op on Edge Delivery.
+ * @param {Element} main The main element
+ */
+function applyMetadataBlock(main) {
+  const block = main?.querySelector(':scope > div > .metadata');
+  if (!block) return;
+  [...block.children].forEach((row) => {
+    const [keyCell, valueCell] = row.children;
+    const name = toClassName(keyCell?.textContent || '');
+    const value = valueCell?.querySelector('img')?.getAttribute('src') || valueCell?.textContent.trim();
+    if (!name || !value) return;
+    if (name === 'title') document.title = value;
+    const attr = name === 'title' || name === 'image' ? 'property' : 'name';
+    const metaName = attr === 'property' ? `og:${name}` : name;
+    let meta = document.head.querySelector(`meta[${attr}="${metaName}"]`);
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute(attr, metaName);
+      document.head.append(meta);
+    }
+    meta.content = value;
+  });
+  block.remove();
+}
+
+/**
  * Loads everything needed to get to LCP.
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
+  applyMetadataBlock(doc.querySelector('main'));
   decorateTemplateAndTheme();
+  const template = getMetadata('template');
+  if (TEMPLATES.includes(template)) {
+    await loadCSS(`${window.hlx.codeBasePath}/templates/${template}/${template}.css`);
+  }
   if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
     doc.body.dataset.breadcrumbs = true;
   }

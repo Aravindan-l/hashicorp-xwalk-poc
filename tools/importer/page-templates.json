@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "projectType": "xwalk"
+  },
+  "templates": [
+    {
+      "name": "blog-article",
+      "urls": [
+        "https://www.hashicorp.com/en/blog/a-new-look-for-vagrant"
+      ],
+      "description": "HashiCorp blog article: breadcrumbs, title, intro, authors, tags and hero image in an Article Header block, followed by the article body as default content",
+      "blocks": [
+        {
+          "name": "article-header",
+          "instances": [
+            "[class*='post_header']"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-1",
+          "name": "Article Header",
+          "selector": [
+            "[class*='post_header']"
+          ],
+          "style": null,
+          "blocks": [
+            "article-header"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-2",
+          "name": "Article Body",
+          "selector": [
+            "[class*='post_content']"
+          ],
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            "p",
+            "h2",
+            "h3",
+            "ul",
+            "ol",
+            "img",
+            "blockquote",
+            "pre"
+          ]
+        }
+      ]
+    }
+  ]
+}

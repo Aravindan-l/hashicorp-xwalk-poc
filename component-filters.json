@@ -9,6 +9,7 @@
     "id": "section",
     "components": [
       "accordion",
+      "article-header",
       "button",
       "cards",
       "carousel",
@@ -31,6 +32,12 @@
     "id": "accordion",
     "components": [
       "accordion-item"
+    ]
+  },
+  {
+    "id": "article-header",
+    "components": [
+      "article-author"
     ]
   },
   {
