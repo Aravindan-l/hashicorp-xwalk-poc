@@ -16,6 +16,50 @@ import {
 // Page templates with their own stylesheet in /templates/<name>/<name>.css
 const TEMPLATES = ['blog-article'];
 
+// Root of this site's pages on AEM author, where Universal Editor opens them.
+const AUTHOR_SITE_ROOT = '/content/hashicorp-xwalk-poc';
+
+/**
+ * Resolves a site path such as /fragments/header for where the page is running:
+ * Edge Delivery serves it at the path itself, AEM author under the site root, and the
+ * local preview of the content folder under /content.
+ * @param {string} path Site path starting with /
+ * @returns {string} The path to fetch
+ */
+export function resolveSitePath(path) {
+  const { pathname } = window.location;
+  if (pathname.startsWith(`${AUTHOR_SITE_ROOT}/`)) return `${AUTHOR_SITE_ROOT}${path}`;
+  if (pathname.startsWith('/content/')) return `/content${path}`;
+  return path;
+}
+
+/**
+ * Turns :name: tokens in text into icon spans (span.icon.icon-name), so authors can place
+ * icons from /icons in rich text. Run decorateIcons afterwards to load them.
+ * @param {Element} element Container to scan
+ */
+export function decorateIconTokens(element) {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) {
+    if (/:[a-z][a-z0-9-]*:/.test(walker.currentNode.nodeValue)) nodes.push(walker.currentNode);
+  }
+  nodes.forEach((node) => {
+    const frag = document.createDocumentFragment();
+    node.nodeValue.split(/(:[a-z][a-z0-9-]*:)/).forEach((part) => {
+      const m = part.match(/^:([a-z][a-z0-9-]*):$/);
+      if (m) {
+        const span = document.createElement('span');
+        span.className = `icon icon-${m[1]}`;
+        frag.append(span);
+      } else if (part) {
+        frag.append(part);
+      }
+    });
+    node.replaceWith(frag);
+  });
+}
+
 /**
  * Moves all the attributes from a given elmenet to another given element.
  * @param {Element} from the element to copy attributes from
