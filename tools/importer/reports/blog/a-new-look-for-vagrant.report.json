@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "url": "https://www.hashicorp.com/en/blog/a-new-look-for-vagrant",
+  "path": "blog/a-new-look-for-vagrant",
+  "timestamp": "2026-11-07T11:35:13.251Z",
+  "title": "A New Look for Vagrant",
+  "template": "blog-article",
+  "blocks": [
+    "article-header"
+  ],
+  "assets": {
+    "/content/dam/hashicorp-xwalk-poc/blog/a-new-look-for-vagrant/blog-vagrant.png": "https://www.datocms-assets.com/2885/1506457090-blog-vagrant.svg?fm=png&w=444",
+    "/content/dam/hashicorp-xwalk-poc/blog/a-new-look-for-vagrant/cropped0001mitchell-edited.png": "https://www.datocms-assets.com/2885/1751996620-cropped0001mitchell-edited.png",
+    "/content/dam/hashicorp-xwalk-poc/blog/a-new-look-for-vagrant/25bcc9a8-3932-4c44-91c4-91919e9e06a2.png": "https://www.datocms-assets.com/2885/1600076398-25bcc9a8-3932-4c44-91c4-91919e9e06a2.png?w=1200&h=630&fit=crop&fm=png"
+  }
+}

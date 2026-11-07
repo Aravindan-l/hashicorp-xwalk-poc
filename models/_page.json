@@ -21,6 +21,33 @@
           "name": "keywords",
           "multi": true,
           "label": "Keywords"
+        },
+        {
+          "component": "select",
+          "valueType": "string",
+          "name": "template",
+          "label": "Template",
+          "options": [
+            {
+              "name": "Default",
+              "value": ""
+            },
+            {
+              "name": "Blog Article",
+              "value": "blog-article"
+            },
+            {
+              "name": "Blog Listing",
+              "value": "blog-listing"
+            }
+          ]
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "image",
+          "label": "Social Sharing Image",
+          "multi": false
         }
       ]
     }

@@ -1,3 +1,4 @@
+/* stylelint-disable no-descending-specificity -- variants are grouped by layout, not specificity */
 .cards > ul {
   list-style: none;
   margin: 0;
@@ -8,8 +9,10 @@
 }
 
 .cards > ul > li {
-  border: 1px solid #dadada;
-  background-color: var(--background-color);
+  border: 1px solid var(--dark-color);
+  border-radius: 8px;
+  background-color: var(--light-color);
+  overflow: hidden;
 }
 
 .cards .cards-card-body {
@@ -24,4 +27,178 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+}
+
+.cards h3,
+.cards h4 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.cards h3 a:any-link,
+.cards h4 a:any-link {
+  color: var(--heading-color);
+}
+
+.cards p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+/* product groups: gradient header, text, then a row of products */
+.section.products .cards > ul {
+  grid-template-columns: 1fr;
+  gap: 48px 24px;
+}
+
+.section.products .cards > ul > li {
+  border: 0;
+  border-radius: 0;
+  background: none;
+
+  --group-gradient: linear-gradient(90deg, #c594ff, #6b89ff);
+}
+
+.section.products .cards > ul > li:nth-child(2) {
+  --group-gradient: linear-gradient(90deg, #ffb36b, #ff7f8f);
+}
+
+.section.products .cards .cards-card-body {
+  margin: 0;
+}
+
+.section.products .cards .cards-card-body > h3 {
+  margin: 0;
+  padding: 24px 12px 0;
+  border-radius: 6px 6px 0 0;
+  background: var(--group-gradient);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.section.products .cards .cards-card-body > h3 a:any-link {
+  color: #0d0e12;
+}
+
+.section.products .cards .cards-card-body > h3 + p {
+  margin: 0 0 32px;
+  padding: 4px 12px 16px;
+  border-radius: 0 0 6px 6px;
+  background: var(--group-gradient);
+  color: #0d0e12;
+  font-size: 14px;
+}
+
+.section.products .cards .cards-card-body > p.button-container {
+  margin: 0 0 40px;
+}
+
+.section.products .cards .cards-card-body > ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 24px 8px 0;
+  list-style: none;
+  border-image: var(--group-gradient) 1;
+  border-top: 2px solid;
+  font-size: 13px;
+  line-height: 22px;
+}
+
+.section.products .cards .cards-card-body > ul a:any-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--heading-color);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.section.products .cards .cards-card-body > ul .icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: -4px;
+}
+
+/* featured cards: the first card large on the left, the rest as rows with a thumbnail */
+.section.featured-cards .cards > ul {
+  grid-template-columns: 1fr;
+}
+
+.section.featured-cards .cards > ul > li {
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.section.featured-cards .cards .cards-card-body {
+  margin: 16px 0 0;
+}
+
+.section.featured-cards .cards > ul > li img {
+  border-radius: 6px;
+  aspect-ratio: 488 / 330;
+}
+
+.section.featured-cards .cards h3 {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.section.featured-cards .cards p {
+  color: #656a76;
+}
+
+@media (width >= 900px) {
+  .section.products .cards > ul {
+    grid-template-columns: 4fr 3fr;
+  }
+
+  .section.products .cards .cards-card-body > ul {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .section.products .cards > ul > li:nth-child(2) .cards-card-body > ul {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .section.featured-cards .cards > ul {
+    grid-template-columns: 488px 1fr;
+    gap: 24px 32px;
+  }
+
+  .section.featured-cards .cards > ul > li:first-child {
+    grid-row: span 3;
+  }
+
+  .section.featured-cards .cards > ul > li:not(:first-child) {
+    display: grid;
+    grid-template-columns: 156px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .section.featured-cards .cards > ul > li:not(:first-child) .cards-card-body {
+    margin: 0;
+  }
+
+  .section.featured-cards .cards > ul > li:not(:first-child) img {
+    aspect-ratio: 156 / 105;
+  }
+
+  .section.featured-cards .cards > ul > li:not(:first-child) h3 {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .section.featured-cards .cards > ul > li:not(:first-child) p {
+    font-size: 12px;
+    line-height: 20px;
+  }
 }

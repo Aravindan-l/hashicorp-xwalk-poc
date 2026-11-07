@@ -1,0 +1,1 @@
+https://www.hashicorp.com/en/blog/a-new-look-for-vagrant

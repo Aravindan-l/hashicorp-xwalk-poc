@@ -20,6 +20,33 @@
         "name": "keywords",
         "multi": true,
         "label": "Keywords"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "template",
+        "label": "Template",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Blog Article",
+            "value": "blog-article"
+          },
+          {
+            "name": "Blog Listing",
+            "value": "blog-listing"
+          }
+        ]
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Social Sharing Image",
+        "multi": false
       }
     ]
   },
@@ -136,6 +163,38 @@
           {
             "name": "Highlight",
             "value": "highlight"
+          },
+          {
+            "name": "Faint background",
+            "value": "faint"
+          },
+          {
+            "name": "Centered",
+            "value": "centered"
+          },
+          {
+            "name": "Callout",
+            "value": "callout"
+          },
+          {
+            "name": "Call-to-action band",
+            "value": "cta-band"
+          },
+          {
+            "name": "Product groups",
+            "value": "products"
+          },
+          {
+            "name": "Logo grid",
+            "value": "logo-grid"
+          },
+          {
+            "name": "Tabs (each H3 labels the block after it)",
+            "value": "tabs"
+          },
+          {
+            "name": "Featured cards",
+            "value": "featured-cards"
           }
         ]
       }
@@ -157,6 +216,105 @@
         "value": "",
         "label": "Text",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "article-header",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "breadcrumbs",
+        "value": "",
+        "label": "Breadcrumbs",
+        "description": "Links shown above the title, for example Blog / Category"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Article Title",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "intro",
+        "value": "",
+        "label": "Introduction"
+      },
+      {
+        "component": "date-time",
+        "valueType": "date-time",
+        "name": "publishDate",
+        "label": "Publication Date"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "tags",
+        "value": "",
+        "label": "Tags",
+        "description": "A list of tag links, for example product or topic pages"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Hero Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Hero Image Alt Text"
+      }
+    ]
+  },
+  {
+    "id": "article-author",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Author Photo",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Author Photo Alt Text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "name",
+        "value": "",
+        "label": "Author Name",
+        "required": true
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Author Page"
+      }
+    ]
+  },
+  {
+    "id": "blog-list-item",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Blog Article",
+        "description": "An article page built on the Blog Article template; its card is filled from the article itself"
       }
     ]
   },
@@ -304,6 +462,43 @@
         "value": "",
         "label": "Text",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "logo-wall",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "description": "Optional line above the logos, for example Trusted by leading organizations"
+      }
+    ]
+  },
+  {
+    "id": "logo-wall-item",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Logo",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Logo Alt Text"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "link",
+        "label": "Link"
       }
     ]
   },

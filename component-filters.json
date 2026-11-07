@@ -9,6 +9,8 @@
     "id": "section",
     "components": [
       "accordion",
+      "article-header",
+      "blog-list",
       "button",
       "cards",
       "carousel",
@@ -17,6 +19,7 @@
       "fragment",
       "form",
       "hero",
+      "logo-wall",
       "image",
       "quote",
       "search",
@@ -31,6 +34,18 @@
     "id": "accordion",
     "components": [
       "accordion-item"
+    ]
+  },
+  {
+    "id": "article-header",
+    "components": [
+      "article-author"
+    ]
+  },
+  {
+    "id": "blog-list",
+    "components": [
+      "blog-list-item"
     ]
   },
   {
@@ -58,6 +73,12 @@
       "image",
       "button",
       "title"
+    ]
+  },
+  {
+    "id": "logo-wall",
+    "components": [
+      "logo-wall-item"
     ]
   },
   {

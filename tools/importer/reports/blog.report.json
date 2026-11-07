@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "url": "https://www.hashicorp.com/en/blog",
+  "path": "blog",
+  "timestamp": "2026-11-07T11:34:51.623Z",
+  "title": "HashiCorp Blog",
+  "template": "blog-listing",
+  "blocks": [
+    "blog-list"
+  ],
+  "assets": {
+    "/content/dam/hashicorp-xwalk-poc/blog/home/thestack-16-9-hires.png": "https://www.datocms-assets.com/2885/1757950275-thestack_16_9_hires.png"
+  }
+}

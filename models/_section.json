@@ -33,6 +33,38 @@
             {
               "name": "Highlight",
               "value": "highlight"
+            },
+            {
+              "name": "Faint background",
+              "value": "faint"
+            },
+            {
+              "name": "Centered",
+              "value": "centered"
+            },
+            {
+              "name": "Callout",
+              "value": "callout"
+            },
+            {
+              "name": "Call-to-action band",
+              "value": "cta-band"
+            },
+            {
+              "name": "Product groups",
+              "value": "products"
+            },
+            {
+              "name": "Logo grid",
+              "value": "logo-grid"
+            },
+            {
+              "name": "Tabs (each H3 labels the block after it)",
+              "value": "tabs"
+            },
+            {
+              "name": "Featured cards",
+              "value": "featured-cards"
             }
           ]
         }
@@ -44,6 +76,8 @@
       "id": "section",
       "components": [
         "accordion",
+        "article-header",
+        "blog-list",
         "button",
         "cards",
         "carousel",
@@ -52,6 +86,7 @@
         "fragment",
         "form",
         "hero",
+        "logo-wall",
         "image",
         "quote",
         "search",

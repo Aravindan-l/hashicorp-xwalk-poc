@@ -1,0 +1,12 @@
+{
+  "type": "xwalk",
+  "sites": {
+    "hashicorp-xwalk-poc": {
+      "previewOrg": "Aravindan-l",
+      "previewSite": "hashicorp-xwalk-poc",
+      "contentHostUrl": "author-p131558-e1282741.adobeaemcloud.com",
+      "libraryUrl": "https://main--sta-xwalk-boilerplate--aemysites.aem.page/tools/sidekick/library.json",
+      "botProtected": true
+    }
+  }
+}
