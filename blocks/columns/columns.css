@@ -1,10 +1,13 @@
 .columns > div {
   display: flex;
   flex-direction: column;
+  gap: 40px;
 }
 
 .columns img {
+  display: block;
   width: 100%;
+  height: auto;
 }
 
 .columns > div > div {
@@ -15,19 +18,33 @@
   order: 0;
 }
 
-.columns > div > .columns-img-col img {
-  display: block;
+.columns h2,
+.columns h3 {
+  margin-top: 0;
+}
+
+.columns p {
+  margin: 0 0 20px;
+}
+
+.columns p.button-container {
+  margin: 12px 24px 0 0;
 }
 
 @media (width >= 900px) {
   .columns > div {
-    align-items: center;
     flex-direction: unset;
-    gap: 24px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 64px;
   }
 
   .columns > div > div {
-    flex: 1;
+    flex: 0 1 488px;
     order: unset;
+  }
+
+  .columns > div > .columns-img-col {
+    flex: 0 1 592px;
   }
 }

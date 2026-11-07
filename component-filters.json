@@ -18,6 +18,7 @@
       "fragment",
       "form",
       "hero",
+      "logo-wall",
       "image",
       "quote",
       "search",
@@ -65,6 +66,12 @@
       "image",
       "button",
       "title"
+    ]
+  },
+  {
+    "id": "logo-wall",
+    "components": [
+      "logo-wall-item"
     ]
   },
   {

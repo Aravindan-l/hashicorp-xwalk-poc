@@ -17,6 +17,7 @@ body.blog-article main {
 
 body.blog-article main > .section {
   margin: 0;
+  padding: 0;
 }
 
 body.blog-article main > .section > div {

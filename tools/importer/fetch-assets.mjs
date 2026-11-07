@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-restricted-syntax, no-console -- CLI: sequential downloads, progress */
 /*
  * Downloads the images an import mapped to DAM paths (the `assets` map in each
  * tools/importer/reports/**\/*.report.json) into the workspace copy of the DAM:
@@ -6,15 +7,16 @@
  *
  *   node tools/importer/fetch-assets.mjs [report.json ...]
  *
- * Only writes under content/content/dam/hashicorp-xwalk-poc/blog/ and never
- * overwrites an existing file, so other pages' assets cannot be replaced.
+ * Only writes into a page's own subfolder of content/content/dam/hashicorp-xwalk-poc/
+ * (never the folder root) and never overwrites an existing file, so other pages' assets
+ * cannot be replaced.
  */
 import {
   existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync,
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
-const ALLOWED_PREFIX = '/content/dam/hashicorp-xwalk-poc/blog/';
+const ALLOWED_PREFIX = '/content/dam/hashicorp-xwalk-poc/';
 const REPORTS_DIR = 'tools/importer/reports';
 
 function findReports(dir) {
@@ -27,8 +29,9 @@ function findReports(dir) {
 }
 
 async function download(damPath, source) {
-  if (!damPath.startsWith(ALLOWED_PREFIX) || damPath.includes('..')) {
-    throw new Error(`refusing to write outside ${ALLOWED_PREFIX}: ${damPath}`);
+  const inSubfolder = damPath.slice(ALLOWED_PREFIX.length).includes('/');
+  if (!damPath.startsWith(ALLOWED_PREFIX) || !inSubfolder || damPath.includes('..')) {
+    throw new Error(`refusing to write outside a subfolder of ${ALLOWED_PREFIX}: ${damPath}`);
   }
   const target = resolve('content', `.${damPath}`);
   if (existsSync(target)) return 'exists';

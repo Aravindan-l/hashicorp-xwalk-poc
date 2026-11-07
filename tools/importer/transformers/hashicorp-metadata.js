@@ -2,10 +2,13 @@
 /* global WebImporter */
 
 /**
- * Page metadata for HashiCorp blog articles, taken from the source <head>.
+ * Page metadata for imported HashiCorp pages, taken from the source <head>.
  * Keys other than Title/Description must match the page-metadata model field names
  * exactly (md2jcr matches them case-sensitively): template, image.
  */
+// Import template -> value of the page's "template" property (pages without one use the default).
+const PAGE_TEMPLATES = { 'blog-article': 'blog-article' };
+
 export default function transform(hookName, element, payload) {
   if (hookName !== 'afterTransform') return;
   const { document } = payload;
@@ -16,7 +19,8 @@ export default function transform(hookName, element, payload) {
   if (title) cells.Title = title;
   const description = meta('description').replace(/\s*\n\s*/g, ' ');
   if (description) cells.Description = description;
-  cells.template = 'blog-article';
+  const pageTemplate = PAGE_TEMPLATES[payload.template?.name];
+  if (pageTemplate) cells.template = pageTemplate;
 
   // Social image: the 1200x630 crop the source shares, as PNG rather than content-negotiated.
   const og = meta('og:image');

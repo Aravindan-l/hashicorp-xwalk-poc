@@ -180,6 +180,50 @@ export function decorateButtons(element) {
   });
 }
 
+let sectionTabsCount = 0;
+
+/**
+ * In a section styled "tabs", each H3 that ends a run of default content labels the block
+ * that follows it; the blocks become tab panels. The headings stay in the DOM (hidden) so
+ * authors keep editing them in place.
+ * @param {Element} main The main element
+ */
+function decorateSectionTabs(main) {
+  main.querySelectorAll(':scope > .section.tabs').forEach((section) => {
+    const pairs = [...section.querySelectorAll(':scope > .default-content-wrapper')]
+      .map((wrapper) => ({ heading: wrapper.lastElementChild, panel: wrapper.nextElementSibling }))
+      .filter(({ heading, panel }) => heading?.tagName === 'H3' && panel?.matches('[class$="-wrapper"]')
+        && !panel.matches('.default-content-wrapper'));
+    if (pairs.length < 2) return;
+    sectionTabsCount += 1;
+    const tablist = document.createElement('div');
+    tablist.className = 'section-tabs-list';
+    tablist.setAttribute('role', 'tablist');
+    const select = (index) => pairs.forEach(({ panel }, i) => {
+      panel.hidden = i !== index;
+      tablist.children[i].setAttribute('aria-selected', i === index ? 'true' : 'false');
+    });
+    pairs.forEach(({ heading, panel }, i) => {
+      const id = `section-tabs-${sectionTabsCount}-${i + 1}`;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.id = `${id}-tab`;
+      button.className = 'section-tabs-tab';
+      button.setAttribute('role', 'tab');
+      button.setAttribute('aria-controls', id);
+      button.textContent = heading.textContent.trim();
+      button.addEventListener('click', () => select(i));
+      tablist.append(button);
+      heading.classList.add('section-tabs-label');
+      panel.id = id;
+      panel.setAttribute('role', 'tabpanel');
+      panel.setAttribute('aria-labelledby', button.id);
+    });
+    pairs[0].panel.before(tablist);
+    select(0);
+  });
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -188,10 +232,12 @@ export function decorateButtons(element) {
 export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateButtons(main);
+  decorateIconTokens(main);
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  decorateSectionTabs(main);
   // add aria-label to links
   a11yLinks(main);
 }

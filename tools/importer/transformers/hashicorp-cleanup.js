@@ -27,6 +27,7 @@ function assetUrl(src) {
 }
 
 export default function transform(hookName, element, payload) {
+  if (payload.template?.name !== 'blog-article') return;
   const { document } = payload;
 
   if (hookName === 'beforeTransform') {
