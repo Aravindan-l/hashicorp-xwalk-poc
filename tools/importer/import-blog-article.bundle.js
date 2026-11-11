@@ -84,10 +84,10 @@ var CustomImportScript = (() => {
   function linkParagraphs(document, links) {
     return links.map((a) => {
       const p = document.createElement("p");
-      const link = document.createElement("a");
-      link.href = absolute(a.getAttribute("href"));
-      link.textContent = a.textContent.trim().replace(/,$/, "");
-      p.append(link);
+      const link2 = document.createElement("a");
+      link2.href = absolute(a.getAttribute("href"));
+      link2.textContent = a.textContent.trim().replace(/,$/, "");
+      p.append(link2);
       return p;
     });
   }
@@ -125,13 +125,13 @@ var CustomImportScript = (() => {
     const photos = byline ? [...byline.querySelectorAll('[class*="header_authorImages"] img')] : [];
     const names = byline ? [...byline.querySelectorAll('[class*="header_authors"] li')] : [];
     names.forEach((li, i) => {
-      const link = li.querySelector("a");
+      const link2 = li.querySelector("a");
       const name = li.textContent.trim().replace(/,$/, "");
       const photo = photos[i] ? image(document, photos[i].getAttribute("src"), name) : null;
       let authorLink = null;
-      if (link) {
+      if (link2) {
         authorLink = document.createElement("a");
-        authorLink.href = absolute(link.getAttribute("href"));
+        authorLink.href = absolute(link2.getAttribute("href"));
         authorLink.textContent = authorLink.href;
       }
       cells.push([
@@ -145,7 +145,9 @@ var CustomImportScript = (() => {
     element.replaceWith(block);
   }
 
-  // tools/importer/transformers/hashicorp-cleanup.js
+  // tools/importer/transformers/blog-media-tables.js
+  var MAX_TABLE_COLUMNS = 4;
+  var VIDEO_CONTAINERS = '[class*="BlogVideo_videoContainer"], [data-testid="wpl-inline-video"]';
   function absolute2(href) {
     try {
       return new URL(href, "https://www.hashicorp.com").href;
@@ -153,16 +155,129 @@ var CustomImportScript = (() => {
       return href;
     }
   }
+  function link(document, href) {
+    const a = document.createElement("a");
+    a.href = href;
+    a.textContent = href;
+    return a;
+  }
+  function videoSource(container) {
+    var _a, _b;
+    const iframe = container.querySelector("iframe[src], iframe[data-src]");
+    const frameSrc = iframe && (iframe.getAttribute("src") || iframe.getAttribute("data-src"));
+    if (frameSrc) {
+      const youtube = frameSrc.match(/youtube(?:-nocookie)?\.com\/embed\/([\w-]+)/);
+      if (youtube) return { block: "Embed", href: `https://www.youtube.com/watch?v=${youtube[1]}` };
+      const vimeo = frameSrc.match(/player\.vimeo\.com\/video\/(\d+)/);
+      if (vimeo) return { block: "Embed", href: `https://vimeo.com/${vimeo[1]}` };
+      if (/youtu\.be|vimeo\.com|youtube\.com/.test(frameSrc)) return { block: "Embed", href: absolute2(frameSrc) };
+    }
+    const wistiaClass = (_a = container.querySelector('[class*="wistia_async_"]')) == null ? void 0 : _a.className.match(/wistia_async_(\w+)/);
+    const wistiaSource = container.innerHTML.match(/fast\.wistia\.(?:com|net)\/embed\/medias\/(\w+)/);
+    const wistia = (_b = wistiaClass || wistiaSource) == null ? void 0 : _b[1];
+    if (wistia) return { block: "Embed", href: `https://fast.wistia.net/embed/iframe/${wistia}` };
+    const video = [...container.querySelectorAll("video[src], video source[src]")].map((n) => n.getAttribute("src")).find((src) => src && !src.startsWith("blob:") && /\.mp4(\?|$)/i.test(src));
+    if (video) return { block: "Video", href: absolute2(video) };
+    return null;
+  }
+  function replaceVideos(main, document) {
+    const containers = [...main.querySelectorAll(VIDEO_CONTAINERS)].filter((c) => {
+      var _a;
+      return !((_a = c.parentElement) == null ? void 0 : _a.closest(VIDEO_CONTAINERS));
+    });
+    containers.forEach((container) => {
+      const source = videoSource(container);
+      if (!source) {
+        console.warn(`[blog-media-tables] video container without a known source left out: ${container.className}`);
+        container.remove();
+        return;
+      }
+      container.replaceWith(WebImporter.Blocks.createBlock(document, {
+        name: source.block,
+        cells: [[link(document, source.href)]]
+      }));
+    });
+  }
+  function wideTableAsList(table, rows, document) {
+    var _a;
+    const hasHeader = [...((_a = table.querySelector("tr")) == null ? void 0 : _a.children) || []].every((c) => c.tagName === "TH");
+    const headers = hasHeader ? rows[0].map((cell) => cell.textContent.trim()) : [];
+    const list = document.createElement("ul");
+    (hasHeader ? rows.slice(1) : rows).forEach((row) => {
+      const item = document.createElement("li");
+      row.forEach((cell, i) => {
+        const p = document.createElement("p");
+        if (headers[i]) {
+          const label = document.createElement("strong");
+          label.textContent = `${headers[i]}: `;
+          p.append(label);
+        }
+        p.append(...cell.childNodes);
+        item.append(p);
+      });
+      list.append(item);
+    });
+    return list;
+  }
+  function replaceTables(main, document) {
+    main.querySelectorAll('[class*="post_content"] table').forEach((table) => {
+      var _a;
+      const rows = [...table.querySelectorAll("tr")].map((tr) => [...tr.children].filter((cell) => cell.tagName === "TH" || cell.tagName === "TD").map((cell) => {
+        const div = document.createElement("div");
+        div.append(...cell.childNodes);
+        return div;
+      }));
+      const columns = Math.max(0, ...rows.map((r) => r.length));
+      if (!rows.length || !columns) return;
+      if (columns > MAX_TABLE_COLUMNS) {
+        console.warn(`[blog-media-tables] ${columns}-column table written as a list: the Table block goes up to ${MAX_TABLE_COLUMNS}`);
+        (_a = table.closest('[class*="tableBlock"]')) == null ? void 0 : _a.replaceWith(table);
+        table.replaceWith(wideTableAsList(table, rows, document));
+        return;
+      }
+      rows.forEach((row) => {
+        while (row.length < columns) row.push("");
+      });
+      if (columns > 1) rows.forEach((row) => row.unshift(`table-col-${columns}`));
+      const container = table.closest('[class*="tableBlock"]') || table;
+      container.replaceWith(WebImporter.Blocks.createBlock(document, { name: "Table", cells: rows }));
+    });
+  }
+  function replaceQuotes(main, document) {
+    main.querySelectorAll('[class*="post_content"] blockquote').forEach((quote) => {
+      const quotation = document.createElement("div");
+      quotation.append(...quote.childNodes);
+      quote.replaceWith(WebImporter.Blocks.createBlock(document, { name: "Quote", cells: [[quotation]] }));
+    });
+  }
+  function transform(hookName, element, payload) {
+    var _a;
+    if (((_a = payload.template) == null ? void 0 : _a.name) !== "blog-article") return;
+    if (hookName !== "beforeTransform") return;
+    const { document } = payload;
+    replaceTables(element, document);
+    replaceVideos(element, document);
+    replaceQuotes(element, document);
+  }
+
+  // tools/importer/transformers/hashicorp-cleanup.js
+  function absolute3(href) {
+    try {
+      return new URL(href, "https://www.hashicorp.com").href;
+    } catch (e) {
+      return href;
+    }
+  }
   function assetUrl2(src) {
-    let url = absolute2(src || "");
+    let url = absolute3(src || "");
     if (url.includes("/_next/image")) {
       const inner = new URL(url).searchParams.get("url");
-      if (inner) url = absolute2(inner);
+      if (inner) url = absolute3(inner);
     }
     const base = url.split("?")[0];
     return /\.svg$/i.test(base) ? `${base}?fm=png&w=1600` : url;
   }
-  function transform(hookName, element, payload) {
+  function transform2(hookName, element, payload) {
     var _a;
     if (((_a = payload.template) == null ? void 0 : _a.name) !== "blog-article") return;
     const { document } = payload;
@@ -194,7 +309,7 @@ var CustomImportScript = (() => {
 
   // tools/importer/transformers/hashicorp-metadata.js
   var PAGE_TEMPLATES = { "blog-article": "blog-article", "blog-listing": "blog-listing" };
-  function transform2(hookName, element, payload) {
+  function transform3(hookName, element, payload) {
     var _a;
     if (hookName !== "afterTransform") return;
     const { document } = payload;
@@ -221,7 +336,7 @@ var CustomImportScript = (() => {
 
   // tools/importer/transformers/hashicorp-sections.js
   var MARKER = "data-import-section";
-  function transform3(hookName, element, payload) {
+  function transform4(hookName, element, payload) {
     const { document, template } = payload;
     const sections = (template == null ? void 0 : template.sections) || [];
     if (hookName === "beforeTransform") {
@@ -308,7 +423,7 @@ var CustomImportScript = (() => {
     ]
   };
   var parsers = { "article-header": parse };
-  var transformers = [transform, transform3, transform2];
+  var transformers = [transform, transform2, transform4, transform3];
   function executeTransformers(hookName, element, payload) {
     const enhancedPayload = __spreadProps(__spreadValues({}, payload), { template: PAGE_TEMPLATE });
     transformers.forEach((fn) => {

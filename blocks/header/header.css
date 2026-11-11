@@ -358,7 +358,7 @@ header .nav-tool {
   box-sizing: border-box;
   border: 1px solid transparent;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   line-height: 20px;
   white-space: nowrap;
@@ -665,29 +665,100 @@ header .nav-list-described ~ .nav-promo .nav-promo-cta {
 
 .subnav .subnav-group-title {
   margin: 0 0 16px;
-  color: #b2b6bd;
-  font-size: 13px;
+  color: #efeff1;
+  font-size: 24px;
   font-weight: 600;
-  letter-spacing: 1.3px;
-  text-transform: uppercase;
+  line-height: 32px;
 }
 
+/* links are bordered chips; topics wrap, products (with logos) sit in two columns */
 .subnav .subnav-group-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.subnav .subnav-group:has(.icon) .subnav-group-list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 24px;
+  grid-template-columns: repeat(2, max-content);
+  justify-items: start;
 }
 
 .subnav .subnav-group-list a {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid #3b3d45;
+  border-radius: 5px;
+  color: #efeff1;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.subnav .subnav-group-list a:hover {
+  border-color: #656a76;
 }
 
 /* stylelint-disable-next-line no-descending-specificity */
 .subnav .subnav-group-list .icon {
   width: 16px;
   height: 16px;
+}
+
+/* blog search: light field with the search button inside its right end */
+.subnav .subnav-search {
+  position: relative;
+  display: flex;
+  margin: 0;
+}
+
+.subnav .subnav-search-input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 36px;
+  padding: 8px 48px 8px 16px;
+  border: 1px solid #616875;
+  border-radius: 5px;
+  background-color: #efeff1;
+  color: #0c0c0e;
+  font: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  appearance: none;
+}
+
+.subnav .subnav-search-input::placeholder {
+  color: #616875;
+}
+
+.subnav .subnav-search-button {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.subnav .subnav-search-button .icon {
+  display: flex;
+  width: 16px;
+  height: 16px;
+}
+
+.subnav .subnav-search-button .icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 @media (width >= 900px) {
@@ -712,9 +783,34 @@ header .nav-list-described ~ .nav-promo .nav-promo-cta {
 
   .subnav .subnav-links {
     flex-direction: row;
-    gap: 24px;
-    padding-right: 16px;
-    border-right: 1px solid #3b3d45;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* short divider between the links and the dropdown */
+  .subnav .subnav-links::after {
+    content: '';
+    width: 1px;
+    height: 28px;
+    margin: 0 8px;
+    background-color: #3b3d45;
+  }
+
+  .subnav .subnav-links a {
+    display: block;
+    padding: 12px;
+    color: #efeff1;
+    font-weight: 500;
+  }
+
+  /* the dropdown trigger reads as plain text next to the links */
+  .subnav .subnav-trigger {
+    background: none;
+    font-weight: 500;
+  }
+
+  .subnav .subnav-search {
+    width: 200px;
   }
 
   .subnav .subnav-panel,
@@ -723,14 +819,14 @@ header .nav-list-described ~ .nav-promo .nav-promo-cta {
     top: 100%;
     left: 0;
     right: 0;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: 40px 112px;
-    border-top: 1px solid #3b3d45;
+    grid-template-columns: max-content minmax(0, 640px);
+    gap: 64px 96px;
+    padding: 48px 104px 64px;
     background-color: #0d0e12;
     box-shadow: 0 16px 24px rgb(0 0 0 / 40%);
   }
 
-  .subnav .subnav-group-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .subnav .subnav-menu.is-open .subnav-trigger {
+    background-color: #1d1f25;
   }
 }

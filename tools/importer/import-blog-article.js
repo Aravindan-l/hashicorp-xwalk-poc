@@ -2,6 +2,7 @@
 /* global WebImporter */
 
 import articleHeaderParser from './parsers/article-header.js';
+import mediaTablesTransformer from './transformers/blog-media-tables.js';
 import cleanupTransformer from './transformers/hashicorp-cleanup.js';
 import metadataTransformer from './transformers/hashicorp-metadata.js';
 import sectionsTransformer from './transformers/hashicorp-sections.js';
@@ -56,8 +57,9 @@ const PAGE_TEMPLATE = {
 };
 
 const parsers = { 'article-header': articleHeaderParser };
-// Cleanup first so the other transformers see only the article; metadata last, after cleanup.
-const transformers = [cleanupTransformer, sectionsTransformer, metadataTransformer];
+// Videos and tables before cleanup, which removes the iframes videos live in; cleanup next so the
+// other transformers see only the article; metadata last, after cleanup.
+const transformers = [mediaTablesTransformer, cleanupTransformer, sectionsTransformer, metadataTransformer];
 
 function executeTransformers(hookName, element, payload) {
   const enhancedPayload = { ...payload, template: PAGE_TEMPLATE };

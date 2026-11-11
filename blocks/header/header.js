@@ -160,7 +160,8 @@ function buildTopLevel(section, index, nav) {
 }
 
 function buildBrand(section) {
-  const picture = section.querySelector('picture');
+  // a <picture> on Edge Delivery; a plain <img> in content that has not been through the pipeline
+  const picture = section.querySelector('picture, img');
   const a = section.querySelector('a');
   const link = a ? plainLink(a, 'nav-brand-link') : el('a', 'nav-brand-link');
   if (!a) link.href = '/';
@@ -194,10 +195,50 @@ function toggleDrawer(nav, open = !nav.classList.contains('is-open')) {
   document.body.style.overflowY = open && !isDesktop.matches ? 'hidden' : '';
 }
 
+/**
+ * A search box from a section holding one link to the results page whose query parameter is
+ * empty (https://…/blog/all?q=): the link text is the placeholder, the empty parameter takes
+ * the query. Returns null when the section is not a search.
+ * @param {Element} content Section content
+ */
+function buildSearch(content) {
+  const a = content.querySelector('a');
+  if (!a || content.querySelector('h2')) return null;
+  const url = new URL(a.href);
+  const name = [...url.searchParams.entries()].find(([, value]) => value === '')?.[0];
+  if (!name) return null;
+
+  const form = el('form', 'subnav-search');
+  form.setAttribute('role', 'search');
+  form.method = 'get';
+  form.action = `${url.origin}${url.pathname}`;
+  url.searchParams.forEach((value, key) => {
+    if (key === name) return;
+    const hidden = el('input');
+    hidden.type = 'hidden';
+    hidden.name = key;
+    hidden.value = value;
+    form.append(hidden);
+  });
+  const label = a.textContent.trim();
+  const input = el('input', 'subnav-search-input');
+  input.type = 'search';
+  input.name = name;
+  input.placeholder = label;
+  input.setAttribute('aria-label', label);
+  const button = el('button', 'subnav-search-button', el('span', 'icon icon-search'));
+  button.type = 'submit';
+  button.setAttribute('aria-label', label);
+  form.append(input, button);
+  decorateIcons(form);
+  return form;
+}
+
 /*
  * Section bar fragment (e.g. /fragments/blog-nav), default content:
  * 1 logo image and its link, 2 a list of links, then one section per dropdown
- * (h2 label, then an h3 + list for each group of links).
+ * (h2 label, then an h3 + list for each group of links), and optionally a search section
+ * (see buildSearch).
  */
 async function buildSubnav() {
   const meta = getMetadata('subnav');
@@ -229,6 +270,11 @@ async function buildSubnav() {
   }
   menuSections.forEach((section, i) => {
     const content = section.querySelector('.default-content-wrapper') || section;
+    const search = buildSearch(content);
+    if (search) {
+      items.append(search);
+      return;
+    }
     const label = content.querySelector('h2')?.textContent.trim();
     if (!label) return;
     const trigger = el('button', 'subnav-trigger', label);

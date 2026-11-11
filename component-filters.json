@@ -84,7 +84,10 @@
   {
     "id": "table",
     "components": [
-      "table-row"
+      "table-row",
+      "table-col-2",
+      "table-col-3",
+      "table-col-4"
     ]
   },
   {
