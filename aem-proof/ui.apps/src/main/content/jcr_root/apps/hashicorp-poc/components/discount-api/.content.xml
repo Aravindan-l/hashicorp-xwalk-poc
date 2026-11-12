@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Resource type of the read-only discount API. ProofServlet answers GET *.calculate.json on resources of this type. -->
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
+    jcr:primaryType="cq:Component"
+    jcr:title="Discount API (proof of concept)"
+    jcr:description="JSON endpoint backed by the Java DiscountService"
+    componentGroup=".hidden"/>

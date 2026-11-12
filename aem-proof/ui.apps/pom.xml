@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.hashicorp.poc</groupId>
+    <artifactId>hashicorp-poc</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>hashicorp-poc.ui.apps</artifactId>
+  <packaging>content-package</packaging>
+  <name>HashiCorp POC - UI apps</name>
+  <description>Immutable code package: the resource type the discount servlet is bound to</description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>filevault-package-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <name>hashicorp-poc.ui.apps</name>
+          <group>hashicorp-poc</group>
+          <packageType>application</packageType>
+          <validatorsSettings>
+            <jackrabbit-filter>
+              <options>
+                <!-- created by the existing application package when merged; declared here so the standalone build validates -->
+                <validRoots>/apps,/apps/hashicorp-poc,/apps/hashicorp-poc/components</validRoots>
+              </options>
+            </jackrabbit-filter>
+          </validatorsSettings>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,8 @@
+#
+# Client headers passed to AEM. Keep the existing project's list; the CORS headers below must be
+# included so AEM's CORS policy can see the calling origin and answer with the right headers.
+#
+$include "./default_clientheaders.any"
+"Origin"
+"Access-Control-Request-Method"
+"Access-Control-Request-Headers"

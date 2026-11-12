@@ -1,0 +1,8 @@
+Bundle-Category: hashicorp-poc
+Bundle-Name: HashiCorp POC - Core
+Bundle-SymbolicName: com.hashicorp.poc.core
+# Only the service API is exported; the implementation and the servlet stay private
+-exportcontents: com.hashicorp.poc.core.services
+# The SDK API pins Jackson to the release it was built from; the servlet only uses long-stable
+# Jackson 2 features, so accept any 2.12+ runtime rather than requiring the newest AEM release
+Import-Package: com.fasterxml.jackson.*;version="[2.12,3)",*

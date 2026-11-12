@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Outside the Edge Delivery site root (/content/hashicorp-xwalk-poc), so Edge Delivery publishing never picks it up -->
+<workspaceFilter version="1.0">
+    <filter root="/content/hashicorp-poc-api" mode="merge"/>
+</workspaceFilter>

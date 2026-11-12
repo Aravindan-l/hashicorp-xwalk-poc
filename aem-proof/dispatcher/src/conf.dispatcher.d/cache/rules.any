@@ -1,0 +1,12 @@
+#
+# Dispatcher cache rules. Keep the existing project's rules; add only the /0300 rule below.
+#
+$include "./default_rules.any"
+
+# Discount API results depend on the query and the caller: never store them in the Dispatcher cache.
+# (Requests with query strings are not cached by default either; this rule makes it explicit.
+# The servlet also sends Cache-Control: no-store, private, which the AEM CDN honours.)
+/0300 {
+    /glob "/content/hashicorp-poc-api/*"
+    /type "deny"
+}

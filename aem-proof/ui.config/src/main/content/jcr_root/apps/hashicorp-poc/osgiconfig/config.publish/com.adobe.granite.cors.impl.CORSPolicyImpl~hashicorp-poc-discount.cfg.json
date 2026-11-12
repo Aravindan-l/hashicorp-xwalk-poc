@@ -1,0 +1,19 @@
+{
+  "alloworigin": [],
+  "alloworiginregexp": [
+    "https://[a-z0-9-]+--hashicorp-xwalk-poc--aravindan-l\\.aem\\.(page|live)"
+  ],
+  "allowedpaths": [
+    "/content/hashicorp-poc-api/discount\\.calculate\\.json"
+  ],
+  "supportedmethods": [
+    "GET"
+  ],
+  "supportedheaders": [
+    "Accept",
+    "Origin"
+  ],
+  "exposedheaders": [],
+  "maxage:Integer": 1800,
+  "supportscredentials": false
+}

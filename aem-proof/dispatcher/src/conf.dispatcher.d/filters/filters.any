@@ -1,0 +1,14 @@
+#
+# Dispatcher filters. Keep the existing project's rules; add only the /0300 rule below.
+#
+$include "./default_filters.any"
+
+# Discount API (proof of concept): GET only, this one resource, this selector and extension only.
+# Everything else under /content/hashicorp-poc-api stays denied by the default deny-all rule.
+/0300 {
+    /type "allow"
+    /method "GET"
+    /path "/content/hashicorp-poc-api/discount"
+    /selectors "calculate"
+    /extension "json"
+}

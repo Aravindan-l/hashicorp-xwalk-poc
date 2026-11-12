@@ -1,0 +1,19 @@
+{
+  "alloworigin": [
+    "http://localhost:3000"
+  ],
+  "alloworiginregexp": [],
+  "allowedpaths": [
+    "/content/hashicorp-poc-api/discount\\.calculate\\.json"
+  ],
+  "supportedmethods": [
+    "GET"
+  ],
+  "supportedheaders": [
+    "Accept",
+    "Origin"
+  ],
+  "exposedheaders": [],
+  "maxage:Integer": 1800,
+  "supportscredentials": false
+}
