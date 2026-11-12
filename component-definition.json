@@ -367,7 +367,7 @@
                   "name": "Proof",
                   "model": "proof",
                   "title": "Discount calculator",
-                  "endpoint": "/content/hashicorp-poc-api/discount.calculate.json"
+                  "endpoint": "/bin/hashicorp/discount"
                 }
               }
             }

@@ -1,23 +1,33 @@
 /*
- * Proof block: sends an order amount to the AEM Publish discount servlet and shows the
- * Java-calculated result. No discount rules live here: the browser only checks that the input
- * is a well-formed amount, then displays what the server returns.
+ * Proof block: sends an order amount to a servlet on AEM Publish and shows the Java-calculated
+ * result. No discount rules live here: the browser only checks that the input is a well-formed
+ * amount, then displays what the server returns.
+ *
+ * Two response types are supported:
+ *  - text/html (server-side rendered fragment, e.g. /bin/hashicorp/discount): inserted after
+ *    passing a strict allowlist (only basic text/list/table tags, only the class attribute);
+ *  - application/json (the aem-proof discount.calculate.json servlet): rendered with textContent.
  */
 import { getMetadata } from '../../scripts/aem.js';
 
-const DEFAULT_ENDPOINT = '/content/hashicorp-poc-api/discount.calculate.json';
+const DEFAULT_ENDPOINT = '/bin/hashicorp/discount';
 const FPL_DEV_PUBLISH = 'https://publish-p147323-e1509959.adobeaemcloud.com';
 const LOCAL_SDK_PUBLISH = 'http://localhost:4503';
 const TIMEOUT_MS = 10000;
 const AMOUNT_FORMAT = /^\d{1,10}(\.\d{1,2})?$/;
+const ALLOWED_TAGS = new Set([
+  'DIV', 'SPAN', 'P', 'STRONG', 'EM', 'B', 'I', 'BR', 'H2', 'H3', 'H4', 'DL', 'DT', 'DD', 'UL', 'OL', 'LI',
+  'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD',
+]);
+const DROPPED_TAGS = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'NOSCRIPT', 'SVG', 'MATH']);
 
 /**
  * Picks the AEM Publish host for the current environment.
  * 1. Page metadata "proof-api-base" (set per page or via bulk metadata) wins.
  * 2. Local development (localhost) calls the local AEM SDK publish instance.
  * 3. aem.page / aem.live preview and live call the FPL DEV publish tier.
- * 4. Anything else (the production domain) calls the same origin; the CDN must route
- *    /content/hashicorp-poc-api/* to AEM Publish.
+ * 4. Anything else (the production domain) calls the same origin; the CDN must route the
+ *    servlet path to AEM Publish.
  */
 export function resolveApiBase(hostname = window.location.hostname) {
   const override = getMetadata('proof-api-base');
@@ -38,13 +48,41 @@ function el(tag, className, text) {
   return node;
 }
 
+/**
+ * Rebuilds server HTML from an inert parsed document, keeping only allowlisted tags and the
+ * class attribute. Scripts, event handlers, links, images and styles never reach the page.
+ */
+export function sanitizeFragment(html) {
+  const parsed = new DOMParser().parseFromString(html, 'text/html');
+  const copy = (source, target) => {
+    source.childNodes.forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        target.append(document.createTextNode(node.textContent));
+      } else if (node.nodeType === Node.ELEMENT_NODE && !DROPPED_TAGS.has(node.tagName)) {
+        if (ALLOWED_TAGS.has(node.tagName)) {
+          const clean = document.createElement(node.tagName.toLowerCase());
+          const cls = node.getAttribute('class');
+          if (cls) clean.className = cls;
+          copy(node, clean);
+          target.append(clean);
+        } else {
+          copy(node, target); // unknown wrapper: keep its text, drop the tag
+        }
+      }
+    });
+  };
+  const fragment = document.createDocumentFragment();
+  copy(parsed.body, fragment);
+  return fragment;
+}
+
 function formatAmount(value) {
   const number = Number(value);
   if (!Number.isFinite(number)) return String(value);
   return number.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function showResult(output, data) {
+function jsonResult(data) {
   const list = el('dl', 'proof-result');
   [
     ['Order amount', formatAmount(data.orderAmount)],
@@ -54,39 +92,48 @@ function showResult(output, data) {
   ].forEach(([label, value]) => {
     list.append(el('dt', '', label), el('dd', '', value));
   });
-  output.replaceChildren(
-    el('p', 'proof-message', data.message),
-    list,
-    el('p', 'proof-source', 'Calculated by the DiscountService OSGi component on AEM Publish.'),
-  );
+  return [el('p', 'proof-message', data.message), list];
 }
 
 function showError(output, message) {
   output.replaceChildren(el('p', 'proof-error', message));
 }
 
+/** Calls the servlet and returns the nodes to display; throws an Error with a readable message. */
 async function callApi(url) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
     const response = await fetch(url, {
       method: 'GET',
-      headers: { Accept: 'application/json' },
+      headers: { Accept: 'text/html, application/json;q=0.9' },
       credentials: 'omit',
       cache: 'no-store',
       signal: controller.signal,
     });
-    let body = null;
-    try {
-      body = await response.json();
-    } catch (e) {
-      body = null;
+    const type = response.headers.get('content-type') || '';
+
+    if (type.includes('application/json')) {
+      let body = null;
+      try {
+        body = await response.json();
+      } catch (e) {
+        body = null;
+      }
+      if (!response.ok || !body || body.success !== true) {
+        throw new Error(body && typeof body.error === 'string' ? body.error : `The API answered with status ${response.status}.`);
+      }
+      return { nodes: jsonResult(body), ok: true };
     }
-    if (!response.ok || !body || body.success !== true) {
-      const reason = body && typeof body.error === 'string' ? body.error : `The API answered with status ${response.status}.`;
-      throw new Error(reason);
+
+    if (type.includes('text/html')) {
+      const fragment = sanitizeFragment(await response.text());
+      if (!fragment.textContent.trim()) throw new Error(`The API answered with status ${response.status} and no content.`);
+      // 4xx/5xx fragments carry the server's own error message; show them as an error state
+      return { nodes: [fragment], ok: response.ok };
     }
-    return body;
+
+    throw new Error(`The API answered with status ${response.status} and an unexpected content type.`);
   } catch (e) {
     if (e.name === 'AbortError') throw new Error('The API did not answer in time. Please try again.');
     if (e instanceof TypeError) throw new Error('The discount API could not be reached (network or CORS). Check that AEM Publish is running and allows this site.');
@@ -132,10 +179,15 @@ export default function decorate(block) {
     input.removeAttribute('aria-invalid');
     button.disabled = true;
     block.classList.add('loading');
+    output.classList.remove('proof-output-error');
     output.replaceChildren(el('p', 'proof-loading', 'Calculating on AEM Publish…'));
     try {
-      const data = await callApi(`${apiUrl}?amount=${encodeURIComponent(raw)}`);
-      showResult(output, data);
+      const { nodes, ok } = await callApi(`${apiUrl}?amount=${encodeURIComponent(raw)}`);
+      output.classList.toggle('proof-output-error', !ok);
+      output.replaceChildren(
+        ...nodes,
+        el('p', 'proof-source', ok ? 'Calculated by Java on AEM Publish.' : 'Rejected by Java on AEM Publish.'),
+      );
     } catch (e) {
       showError(output, e.message);
     } finally {

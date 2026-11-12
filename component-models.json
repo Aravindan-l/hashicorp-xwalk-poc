@@ -538,8 +538,8 @@
         "valueType": "string",
         "name": "endpoint",
         "label": "API path on AEM Publish",
-        "value": "/content/hashicorp-poc-api/discount.calculate.json",
-        "description": "Path of the discount servlet. The host is chosen per environment (local SDK, aem.page/aem.live, production)."
+        "value": "/bin/hashicorp/discount",
+        "description": "Path of the discount servlet (HTML or JSON response). The host is chosen per environment (local SDK, aem.page/aem.live, production)."
       }
     ]
   },
