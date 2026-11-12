@@ -1,0 +1,103 @@
+.proof {
+  max-width: 720px;
+  margin: 32px auto 0;
+  padding: 32px;
+  border: 1px solid var(--dark-color);
+  border-radius: 8px;
+  background-color: var(--light-color);
+}
+
+.proof .proof-title {
+  margin-top: 0;
+}
+
+.proof .proof-intro p {
+  margin: 0 0 16px;
+}
+
+.proof .proof-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.proof .proof-form label {
+  flex-basis: 100%;
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+.proof .proof-input {
+  flex: 1 1 220px;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #616875;
+  border-radius: 6px;
+  background-color: var(--background-color);
+  color: var(--heading-color);
+  font: inherit;
+}
+
+.proof .proof-input[aria-invalid='true'] {
+  border-color: #ff8f8f;
+}
+
+.proof .proof-button {
+  margin: 0;
+  height: 44px;
+}
+
+.proof .proof-button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.proof .proof-output {
+  margin-top: 24px;
+}
+
+.proof .proof-output:empty {
+  display: none;
+}
+
+.proof .proof-message {
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+.proof .proof-result {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 24px;
+  margin: 0;
+}
+
+.proof .proof-result dt {
+  color: var(--text-color);
+}
+
+.proof .proof-result dd {
+  margin: 0;
+  color: var(--heading-color);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.proof .proof-result dt:last-of-type,
+.proof .proof-result dd:last-of-type {
+  padding-top: 8px;
+  border-top: 1px solid var(--dark-color);
+  color: var(--heading-color);
+  font-weight: 700;
+}
+
+.proof .proof-error {
+  color: #ff8f8f;
+}
+
+.proof .proof-loading,
+.proof .proof-source {
+  color: var(--text-color);
+  font-size: var(--body-font-size-s);
+}
