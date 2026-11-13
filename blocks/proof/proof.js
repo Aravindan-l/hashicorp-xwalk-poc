@@ -26,8 +26,9 @@ const DROPPED_TAGS = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'T
  * 1. Page metadata "proof-api-base" (set per page or via bulk metadata) wins.
  * 2. Local development (localhost) calls the local AEM SDK publish instance.
  * 3. aem.page / aem.live preview and live call the FPL DEV publish tier.
- * 4. Anything else (the production domain) calls the same origin; the CDN must route the
- *    servlet path to AEM Publish.
+ * 4. Anything else calls the same origin: AEM Author when the page is open in Universal Editor
+ *    (the servlet runs there too), or the production domain, whose CDN must route the servlet
+ *    path to AEM Publish.
  */
 export function resolveApiBase(hostname = window.location.hostname) {
   const override = getMetadata('proof-api-base');
@@ -107,7 +108,10 @@ async function callApi(url) {
     const response = await fetch(url, {
       method: 'GET',
       headers: { Accept: 'text/html, application/json;q=0.9' },
-      credentials: 'omit',
+      // same-origin: in Universal Editor the page runs on AEM Author, so the author login
+      // cookie is sent and the servlet answers there; cross-site calls (aem.page -> Publish)
+      // stay cookieless
+      credentials: 'same-origin',
       cache: 'no-store',
       signal: controller.signal,
     });
