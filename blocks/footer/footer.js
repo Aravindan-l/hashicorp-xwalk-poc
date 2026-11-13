@@ -10,6 +10,54 @@ import { loadFragment } from '../fragment/fragment.js';
 
 const SECTION_CLASSES = ['footer-brand', 'footer-links', 'footer-legal', 'footer-social'];
 
+/*
+ * Copyright line: authors write only {copyright}; the text comes from the App Builder
+ * "copyright" action, which decides the year in the company time zone.
+ * Set COPYRIGHT_API to the deployed action URL, or override it with the "copyright-api" metadata.
+ */
+const COPYRIGHT_TOKEN = '{copyright}';
+const COPYRIGHT_API = '';
+const LOCAL_COPYRIGHT_API = 'http://localhost:9080/api/v1/web/hashicorp-site/copyright';
+const COPYRIGHT_FALLBACK_OWNER = 'HashiCorp';
+
+function copyrightApi() {
+  const meta = getMetadata('copyright-api');
+  if (meta) return meta;
+  const { hostname } = window.location;
+  if (hostname === 'localhost' || hostname === '127.0.0.1') return LOCAL_COPYRIGHT_API;
+  return COPYRIGHT_API;
+}
+
+/**
+ * Replaces {copyright} at once with a browser-side fallback (so the token is never visible and the
+ * footer never waits), then with the action's text when it answers.
+ */
+function fillCopyright(root) {
+  const holders = [...root.querySelectorAll('p, li, span')]
+    .filter((node) => node.childElementCount === 0 && node.textContent.includes(COPYRIGHT_TOKEN));
+  if (!holders.length) return;
+  holders.forEach((node) => {
+    node.classList.add('footer-copyright');
+    node.dataset.template = node.textContent;
+  });
+  const show = (text) => holders.forEach((node) => {
+    node.textContent = node.dataset.template.replace(COPYRIGHT_TOKEN, text);
+  });
+  show(`© ${new Date().getFullYear()} ${COPYRIGHT_FALLBACK_OWNER}`);
+
+  const api = copyrightApi();
+  if (!api) return;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 5000);
+  fetch(api, { credentials: 'omit', signal: controller.signal })
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => {
+      if (data && typeof data.text === 'string' && data.text.trim()) show(data.text.trim());
+    })
+    .catch(() => { /* keep the fallback */ })
+    .finally(() => clearTimeout(timer));
+}
+
 /** Pairs each heading with the list that follows it. */
 function buildColumns(container) {
   const columns = document.createElement('div');
@@ -62,6 +110,7 @@ export default async function decorate(block) {
     if (i === 3) buildSocial(content);
     footer.append(section);
   });
+  fillCopyright(footer);
 
   const nav = document.createElement('nav');
   nav.setAttribute('aria-label', 'Footer');

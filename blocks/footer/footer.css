@@ -90,6 +90,11 @@ footer .footer-legal ul {
   gap: 12px 24px;
 }
 
+footer .footer-legal .footer-copyright {
+  margin: 16px 0 0;
+  font-size: var(--body-font-size-s);
+}
+
 footer .footer-social {
   margin-top: 24px !important;
 }
