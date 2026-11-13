@@ -1,0 +1,13 @@
+{
+  "name": "hashicorp-site-copyright",
+  "version": "1.0.0",
+  "private": true,
+  "description": "App Builder web action that returns the HashiCorp site copyright line",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "dev": "node dev-server.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

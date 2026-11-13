@@ -1,0 +1,19 @@
+# Adobe App Builder application: one public web action that returns the site's copyright line.
+application:
+  runtimeManifest:
+    packages:
+      hashicorp-site:
+        license: Apache-2.0
+        actions:
+          copyright:
+            function: actions/copyright/index.js
+            web: 'yes'
+            runtime: nodejs:22
+            inputs:
+              OWNER: HashiCorp, an IBM Company
+              TIME_ZONE: America/Los_Angeles
+              START_YEAR: ''
+            annotations:
+              # Public, read-only, no personal data: no Adobe login needed to call it
+              require-adobe-auth: false
+              final: true
